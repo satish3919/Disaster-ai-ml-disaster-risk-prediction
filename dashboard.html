@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Disaster Risk Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f0f2f5; padding: 40px; }
+        .container { max-width: 500px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #333; }
+        input { padding: 10px; width: 70%; font-size: 16px; }
+        button { padding: 10px 20px; font-size: 16px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .risk-box { margin-top: 20px; padding: 15px; border-radius: 8px; }
+        .flood { background: #e3f2fd; }
+        .fire { background: #ffebee; }
+        .landslide { background: #fff3e0; }
+        .summary { margin-top: 15px; padding: 15px; background: #f5f5f5; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌍 Disaster Risk Dashboard</h1>
+        <input type="text" id="placeInput" placeholder="Enter a place, e.g. Munnar">
+        <button onclick="getRisk()">Check Risk</button>
+
+        <div id="results" style="display:none;">
+            <div class="risk-box flood">💧 Flood Risk: <b id="floodVal"></b>%</div>
+            <div class="risk-box fire">🔥 Fire Risk: <b id="fireVal"></b>%</div>
+            <div class="risk-box landslide">⛰️ Landslide Risk: <b id="landslideVal"></b>%</div>
+            <div class="summary" id="summaryVal"></div>
+        </div>
+    </div>
+
+    <script>
+        async function getRisk() {
+            const place = document.getElementById('placeInput').value;
+            const response = await fetch(`http://127.0.0.1:8000/predict-live?place=${place}`);
+            const data = await response.json();
+
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('floodVal').innerText = data.flood_percent;
+            document.getElementById('fireVal').innerText = data.fire_percent;
+            document.getElementById('landslideVal').innerText = data.landslide_percent;
+            document.getElementById('summaryVal').innerText = data.summary_text;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+=================================================================
+
+FLOOD MODEL V2 - LEAKAGE-SAFE LABELS + ENSO + IOD - REPORT
+
+=================================================================
+
+Regions: 36 | Rows: 2369
+
+
+=== Random Forest ===
+--- WITHIN-REGION (random split) ---
+Accuracy:  0.705
+Precision: 0.271
+Recall:    0.500
+F1 score:  0.352
+ROC-AUC:   0.648
+PR-AUC:    0.295
+Confusion matrix:
+[[296 102]
+ [ 38  38]]
+
+--- LEAVE-REGION-OUT (10 folds) - the metric that matters most ---
+F1 per fold:      [0.333 0.25  0.253 0.27  0.25  0.299 0.344 0.211 0.291 0.389]
+Mean F1  on UNSEEN regions: 0.289 (+/- 0.051)
+Mean AUC on UNSEEN regions: 0.640 (+/- 0.042)
+
+
+=== Logistic Regression (baseline) ===
+--- WITHIN-REGION (random split) ---
+Accuracy:  0.508
+Precision: 0.151
+Recall:    0.447
+F1 score:  0.226
+ROC-AUC:   0.525
+PR-AUC:    0.216
+Confusion matrix:
+[[207 191]
+ [ 42  34]]
+
+--- LEAVE-REGION-OUT (10 folds) - the metric that matters most ---
+F1 per fold:      [0.232 0.205 0.301 0.303 0.403 0.294 0.291 0.233 0.409 0.356]
+Mean F1  on UNSEEN regions: 0.303 (+/- 0.066)
+Mean AUC on UNSEEN regions: 0.600 (+/- 0.056)
+
+
+=== HistGradientBoosting ===
+--- WITHIN-REGION (random split) ---
+Accuracy:  0.770
+Precision: 0.340
+Recall:    0.461
+F1 score:  0.391
+ROC-AUC:   0.703
+PR-AUC:    0.379
+Confusion matrix:
+[[330  68]
+ [ 41  35]]
+
+--- LEAVE-REGION-OUT (10 folds) - the metric that matters most ---
+F1 per fold:      [0.396 0.3   0.327 0.295 0.3   0.29  0.358 0.229 0.324 0.408]
+Mean F1  on UNSEEN regions: 0.323 (+/- 0.051)
+Mean AUC on UNSEEN regions: 0.649 (+/- 0.051)
+
+
+Best model (leave-region-out F1): HistGradientBoosting
+
+
+Random Forest feature importances (all 8 features):
+  IOD_PRE_MONSOON      0.196
+  JAS_HIST_STD         0.154
+  JAS_HIST_MEAN        0.143
+  PREV_JJAS            0.129
+  ONI_PRE_MONSOON      0.104
+  JUN                  0.098
+  RATE_OF_CHANGE       0.091
+  PRE_MONSOON          0.084
+
+
+INTERPRETATION GUIDE:
+- Compare 'leave-region-out' numbers here to your previous run's.
+  Small, believable gains (a few points of F1/AUC) mean the extra
+  signal (IOD, rate-of-change, leakage-safe labels) is helping.
+- If ONI_PRE_MONSOON or IOD_PRE_MONSOON rank near the top of feature
+  importance, the climate signals are doing real work.
+- If JAS_HIST_STD ranks high, it likely means some regions are just
+  inherently more rainfall-variable than others, and that variability
+  itself is predictive of extreme-year risk - a legitimate finding.
+- Do NOT chase F1/AUC above roughly 0.75-0.8 on the leave-region-out
+  fold by adding more features - past that point you are far more
+  likely reintroducing leakage than finding real signal.

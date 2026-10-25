@@ -1,0 +1,45 @@
+=================================================================
+APPROACH 1: THRESHOLD SWEEP ON DIRECT CLASSIFIER
+=================================================================
+
+Out-of-fold ROC-AUC: 0.626
+
+Threshold |  F1   | Precision | Recall | Flagged-as-flood %
+--------------------------------------------------------------
+  0.15   | 0.286 |   0.172   | 0.842 |  78.1%
+  0.20   | 0.295 |   0.182   | 0.776 |  68.3%
+  0.25   | 0.304 |   0.193   | 0.712 |  59.1%
+  0.30   | 0.309 |   0.203   | 0.646 |  51.0%
+  0.35   | 0.311 |   0.214   | 0.567 |  42.4%
+  0.40   | 0.303 |   0.223   | 0.475 |  34.1%
+  0.45   | 0.313 |   0.250   | 0.420 |  26.9%
+  0.50   | 0.323 |   0.284   | 0.375 |  21.1%
+  0.55   | 0.324 |   0.324   | 0.325 |  16.0%
+  0.60   | 0.314 |   0.371   | 0.272 |  11.7%
+
+Best F1 threshold: 0.55 (F1=0.324)
+
+How to use this: if you want an early-warning system biased toward
+catching more real flood years (fewer misses, more false alarms),
+pick a threshold to the LEFT of the best-F1 one (lower cutoff =
+higher recall). If false alarms are costly, pick one to the right.
+
+=================================================================
+APPROACH 2: REGRESSION-FIRST (predict rainfall z-score)
+=================================================================
+
+Out-of-fold RMSE (z-score units): 1.000
+Out-of-fold R^2:                  0.164
+(R^2 near 0 means the regression barely beats predicting the
+ historical average every time; meaningfully above 0 means it's
+ capturing real year-to-year variation.)
+
+Derived flood classification (threshold z > 1.0):
+  F1: 0.166 | Precision: 0.487 | Recall: 0.100
+  Confusion matrix:
+[[1949   40]
+ [ 341   38]]
+
+Compare this F1 to Approach 1's best-F1 row above. Whichever is
+higher is the better modeling strategy for this data - keep that
+one and discard the other rather than running both in production.
